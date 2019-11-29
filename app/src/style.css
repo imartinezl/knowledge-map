@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css?family=Bebas+Neue&display=swap');
+
+
 html {
   margin: 0;
   padding: 0;
@@ -10,6 +13,7 @@ body {
   bottom: 0;
   right: 0;
   left: 0;
+  font-family: 'Bebas Neue', cursive;
 }
 
 svg#mindmap {
