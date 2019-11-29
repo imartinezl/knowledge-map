@@ -27,14 +27,18 @@ var assign = Object.assign || function (dst, src) {
   return dst;
 };
 
-function getTextWidth(text, font) {
+function getTextSize(text, font) {
   // return text.length * 10;
   // re-use canvas object for better performance
-  var canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+  var canvas = getTextSize.canvas || (getTextSize.canvas = document.createElement("canvas"));
+  canvas = document.getElementById("canvas");
   var context = canvas.getContext("2d");
-  context.font = font;
+  context.clearRect(0,0,canvas.width,canvas.height);
+  context.font = "35px Bebas Neue";
+  context.textAlign = "center";
+  context.fillText("KNOWLEDGE MAP",canvas.width/2, canvas.height/2); 
   var metrics = context.measureText(text);
-  return metrics.width;
+  return metrics;
 }
 
 function traverseBranchId(node, branch, state) {
@@ -77,7 +81,7 @@ function Markmap(svg, data, options) {
 }
 
 var defaultPreset = {
-  nodeHeight: 30,
+  nodeHeight: 0,
   nodeWidth: 0,
   nodePadding: 12,
   spacingVertical: 10,
@@ -93,12 +97,12 @@ var defaultPreset = {
 assign(Markmap.prototype, {
   getInitialState: function () {
     return {
-      zoomScale: 0.1,
+      zoomScale: 1,
       zoomTranslate: [0, 0],
       autoFit: true,
       depthMaxSize: {},
       yByDepth: {},
-      nodeFont: 'Bebas Neue' //sans-serif'
+      nodeFont: '35px Bebas Neue' //sans-serif'
     };
   },
   presets: {
@@ -116,7 +120,12 @@ assign(Markmap.prototype, {
       return d3_layout_flextree()
         .setNodeSizes(true)
         .nodeSize(function (d) {
-          var width = d.dummy ? self.state.spacingHorizontal : getTextWidth(d.name, self.state.nodeFont);
+          var metrics = getTextSize(d.name, self.state.nodeFont);
+          console.log(metrics)
+          // var width = d.dummy ? self.state.spacingHorizontal : metrics[0];
+          var width = 10;
+          var height = 10;
+          // var height = metrics[1]; // self.state.nodeHeight
           if (!d.dummy && width > 0) {
             // Add padding non-empty nodes
             width += 2 * self.state.nodePadding;
@@ -451,6 +460,7 @@ assign(Markmap.prototype, {
       // Enter any new links at the parent's previous position.
       link.enter().insert("path", "g")
         .attr("class", "markmap-link")
+        .attr('fill', 'none')
         .attr('stroke', function (d) { return color(d.target.branch); })
         .attr('stroke-width', function (l) { return linkWidth(l.target); })
         .attr("d", function (d) {
