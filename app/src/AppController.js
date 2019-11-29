@@ -26,22 +26,12 @@ export default class FController {
         d3.text("assets/map.txt", (error, text) => {
             const data = transform(parse(text));
             console.log(data);
-            Markmap('svg#mindmap', data, {
+            console.log(Markmap);
+            new Markmap('svg#mindmap', data, {
                 preset: 'default', // or default / colorful
                 linkShape: 'diagonal', // or bracket / diagonal
             });        
         });
-        // d3.text("assets/map.txtmap").then((text) => {
-        //     // console.log(text); // Hello, world!
-        //     const data = transform(parse(text));
-        //     console.log(data);
-        //     console.log(Markmap);
-        //     Markmap('svg#mindmap', data, {
-        //         preset: 'default', // or default / colorful
-        //         linkShape: 'diagonal', // or bracket / diagonal
-
-        //     });
-        // });
 
     }
 }
