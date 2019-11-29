@@ -32,7 +32,7 @@
     "xml-loader": "^1.2.1"
   },
   "dependencies": {
-    "d3": "^5.14.2",
+    "d3": "^3.5.6",
     "d3-flextree": "^2.1.1",
     "markmap": "^0.6.1"
   }
