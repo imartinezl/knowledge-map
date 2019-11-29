@@ -7,7 +7,7 @@ module.exports = {
     mode: 'development',
     watch: true,
     watchOptions: {
-        ignored: ['node_modules','']
+        ignored: ['node_modules']
     },
     entry: './src/index.js',
     output: {
@@ -17,7 +17,6 @@ module.exports = {
     devtool: "inline-source-map",
     devServer: {
         contentBase: './dist',
-        hot: true
     },
     plugins: [
         new CleanWebpackPlugin(),
