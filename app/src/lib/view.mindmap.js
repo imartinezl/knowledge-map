@@ -79,7 +79,7 @@ export default class Markmap {
 
   font = '15pt Bebas Neue'
   config = {
-    circleRadius: 3,
+    circleRadius: 5,
     color: 'category20c', // category20 or gray
     duration: 300,
     font: this.font,
@@ -87,10 +87,10 @@ export default class Markmap {
     linkShape: 'diagonal',
     nodeHeight: parseInt(this.font),
     nodePaddingHorizontal: 12,
-    nodePaddingVertical: 20,
+    nodePaddingVertical: 12,
     nodeSeparation: 50,
     renderer: 'boxed', // basic or boxed
-    spacingVertical: 30,
+    spacingVertical: 12,
     spacingHorizontal: 300,
     truncateLabels: 0,
   };
@@ -158,7 +158,7 @@ export default class Markmap {
     });
 
     this.zoom = d3.behavior.zoom()
-      .scaleExtent([0.4, 2])
+      .scaleExtent([0.1, 2])
       .on("zoom", function () {
         this.updateZoom(d3.event.translate, d3.event.scale);
       }.bind(this));
@@ -338,7 +338,7 @@ export default class Markmap {
         .attr('cursor', 'pointer');
 
       svg.selectAll("path.markmap-link")
-        .attr('stroke-width', 1)
+        .attr('stroke-width', 4)
         .attr('fill', 'none');
     },
     basic: function (source, nodes, links) {
