@@ -13,8 +13,7 @@ body {
   bottom: 0;
   right: 0;
   left: 0;
-  font-family: 'Bebas Neue', cursive;
-  font-size: 35pt
+  
 }
 
 p{
@@ -22,8 +21,11 @@ p{
   font-size: 35pt
 }
 
+
 svg#mindmap {
   width: 100%;
-  height: 100%;
+  height: 600px;
   background: #F6F6F6;
+  font-family: 'Bebas Neue', cursive;
+  font-size: 15pt
 }
