@@ -80,7 +80,7 @@ export default class Markmap {
   font = '15pt Bebas Neue'
   config = {
     circleRadius: 3,
-    color: 'category20', // category20 or gray
+    color: 'category20c', // category20 or gray
     duration: 300,
     font: this.font,
     layout: 'tree',
@@ -328,8 +328,8 @@ export default class Markmap {
         .attr('rx', 10)
         .attr('ry', 10)
         .attr('height', state.nodeHeight + state.nodePaddingVertical)
-        .attr('fill', function (d) { return d3.rgb(color(d.depth)).brighter(1.2); })
-        .attr('stroke', function (d) { return color(d.branch); })
+        .attr('fill', function (d) { return d3.rgb(d.color).brighter(1.2); })
+        .attr('stroke', function (d) { return d.color; })
         .attr('stroke-width', 1)
         .attr('cursor', 'pointer');
 
@@ -346,6 +346,12 @@ export default class Markmap {
       var state = this.state;
       var color = this.colors[this.state.color]();
       var linkShape = this.linkShapes[this.state.linkShape]();
+      
+      if(!nodes[0].color){
+        for(var i in nodes){
+          nodes[i].color = color(nodes[i].depth);
+        }
+      }
 
       function linkWidth(d) {
         var depth = d.depth;
@@ -370,14 +376,14 @@ export default class Markmap {
         .attr("y", function (d) { return -linkWidth(d) / 2 })
         .attr('x', function (d) { return d.y_size; })
         .attr('height', linkWidth)
-        .attr('fill', function (d) { return color(d.branch); });
+        .attr('fill', function (d) { return d.color; });
 
       nodeEnter.append("circle")
         .attr('class', 'markmap-node-circle')
         .attr('cx', function (d) { return d.y_size - state.nodeSeparation; })
-        .attr('stroke', function (d) { return color(d.branch); })
+        .attr('stroke', function (d) { return d.color; })
         .attr("r", 1e-6)
-        .style("fill", function (d) { return d._children ? color(d.branch) : ''; })
+        .style("fill", function (d) { return d._children ? d.color : ''; })
         .attr('cursor', 'pointer');
 
       nodeEnter.append("text")
@@ -402,7 +408,7 @@ export default class Markmap {
 
       nodeUpdate.select("circle")
         .attr("r", state.circleRadius)
-        .style("fill", function (d) { return d._children ? color(d.branch) : ''; })
+        .style("fill", function (d) { return d._children ? d.color : ''; })
         .style('display', function (d) {
           var hasChildren = d.href || d.children || d._children;
           return hasChildren ? 'inline' : 'none';
@@ -440,7 +446,7 @@ export default class Markmap {
       link.enter().insert("path", "g")
         .attr("class", "markmap-link")
         .attr('fill', 'none')
-        .attr('stroke', function (d) { return color(d.target.branch); })
+        .attr('stroke', function (d) { return d.target.color; })
         .attr('stroke-width', function (l) { return linkWidth(l.target); })
         .attr("d", function (d) {
           var o = { x: source.x0, y: source.y0 + source.y_size - state.nodeSeparation };
