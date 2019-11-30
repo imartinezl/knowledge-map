@@ -20,7 +20,6 @@ var getTextSize = (text, font) => {
   var context = canvas.getContext("2d");
   context.clearRect(0,0,canvas.width,canvas.height);
   context.font = "35pt Bebas Neue";
-  context.textAlign = "center";
   context.fillText("KNOWLEDGE MAP",canvas.width/2, canvas.height/2); 
   var metrics = context.measureText(text);
   return metrics;
@@ -67,7 +66,7 @@ export default class Markmap{
   }
 
 
-  defaultPreset = {
+  config = {
     nodeHeight: 30,
     nodeWidth: 0,
     nodePadding: 12,
@@ -76,9 +75,10 @@ export default class Markmap{
     truncateLabels: 0,
     duration: 500,
     layout: 'tree',
-    color: 'gray',
+    color: 'gray', // category20 or gray
     linkShape: 'diagonal',
-    renderer: 'boxed'
+    renderer: 'boxed', // basic or boxed
+    font: '35pt Bebas Neue',
   };
 
   getInitialState = () => {
@@ -88,31 +88,29 @@ export default class Markmap{
       autoFit: true,
       depthMaxSize: {},
       yByDepth: {},
-      nodeFont: '35pt Bebas Neue' //sans-serif'
+      // nodeFont: '35pt Bebas Neue' //sans-serif'
     };
   }
 
   presets = {
-    'default': this.defaultPreset,
-    'colorful': { ...this.defaultPreset,
+    'default': this.config,
+    'colorful': { ...this.config,
       nodeHeight: 10,
       renderer: 'basic',
       color: 'category20',
       nodePadding: 6
     }
-  }
-  helperNames = ['layout', 'linkShape', 'color']
+  }  
+  helperNames = ['layout','linkShape','color']
   layouts = {
-    tree: function (self) {
+    tree: (self) => {
       return d3_layout_flextree()
         .setNodeSizes(true)
-        .nodeSize(function (d) {
-          var metrics = getTextSize(d.name, self.state.nodeFont);
-          console.log(metrics)
-          // var width = d.dummy ? self.state.spacingHorizontal : metrics[0];
+        .nodeSize( (d) => {
+          var metrics = getTextSize(d.name, self.config.font);
           var width = metrics.width;
+          console.log(parseInt('35pt Bebas Neue'))
           var height = 35;
-          // var height = metrics[1]; // self.state.nodeHeight
           if (!d.dummy && width > 0) {
             // Add padding non-empty nodes
             width += 2 * self.state.nodePadding;
@@ -143,17 +141,17 @@ export default class Markmap{
 
   init = (svg, data, options) => {
     options = options || {};
-  
+    
     svg = svg.datum ? svg : d3.select(svg);
-  
-    this.helpers = {};
+    
     this.i = 0;
-    var state = this.state = this.getInitialState();
-    console.log(this.presets)
-    this.set(this.presets[options.preset || 'default']);
-    state.height = svg.node().getBoundingClientRect().height;
-    state.width = svg.node().getBoundingClientRect().width;
-    this.set(options);
+    this.state = this.getInitialState();
+    this.state = {...this.state, ...this.config};
+    // this.set(this.presets[options.preset || 'default']);
+    this.state.height = svg.node().getBoundingClientRect().height;
+    this.state.width = svg.node().getBoundingClientRect().width;
+    console.log(this.state)
+    // this.set(options);
   
     // disable panning using right mouse button
     svg.on("mousedown", function () {
@@ -163,36 +161,38 @@ export default class Markmap{
       }
     });
   
-    var zoom = this.zoom = d3.behavior.zoom()
+    this.zoom = d3.behavior.zoom()
       .on("zoom", function () {
         this.updateZoom(d3.event.translate, d3.event.scale);
       }.bind(this));
   
     this.svg = svg
-      .call(zoom)
+      .call(this.zoom)
       .append("g");
   
-    this.updateZoom(state.zoomTranslate, state.zoomScale);
+    this.updateZoom(this.state.zoomTranslate, this.state.zoomScale);
   
     this.setData(data);
-    this.update(state.root);
+    this.update(this.state.root);
   
-    if (options.autoFit === undefined || options.autoFit === null) {
-      state.autoFit = false;
-    }
+    // if (options.autoFit === undefined || options.autoFit === null) {
+    //   state.autoFit = false;
+    // }
   }
   updateZoom = (translate, scale) => {
-    var state = this.state;
-    state.zoomTranslate = translate;
-    state.zoomScale = scale;
-    this.zoom.translate(state.zoomTranslate)
-      .scale(state.zoomScale);
-    this.svg.attr("transform", "translate(" + state.zoomTranslate + ")" + " scale(" + state.zoomScale + ")")
+    this.state.zoomTranslate = translate; // to review
+    this.state.zoomScale = scale;
+    this.zoom
+      .translate(this.state.zoomTranslate)
+      .scale(this.state.zoomScale);
+    this.svg.attr("transform", "translate(" + this.state.zoomTranslate + ")" + " scale(" + this.state.zoomScale + ")")
   }
   set = (values) => {
     if (values.preset) {
+      console.log('preset')
       this.set(this.presets[values.preset]);
     }
+    console.log('not preset')
     var state = this.state;
     var helpers = this.helpers;
     this.helperNames.forEach(function (h) {
@@ -201,6 +201,7 @@ export default class Markmap{
       }
     }.bind(this));
     assign(state, values || {});
+    console.log(this.state)
     return this;
   }
   preprocessData = (data, prev) => {
@@ -221,13 +222,12 @@ export default class Markmap{
     }
   }
   setData = (data) => {
-    var state = this.state;
   
-    this.preprocessData(data, state.root);
+    this.preprocessData(data, this.state.root);
   
-    state.root = data;
-    state.root.x0 = state.height / 2;
-    state.root.y0 = 0;
+    this.state.root = data;
+    this.state.root.x0 = this.state.height / 2;
+    this.state.root.y0 = 0;
   
     return this;
   }
@@ -294,7 +294,8 @@ export default class Markmap{
     return this;
   }
   layout = (state) => {
-    var layout = this.helpers.layout;
+    var layout = this.layouts.tree(this);
+    console.log(layout)
   
     if (state.linkShape !== 'bracket') {
       // Fill in with dummy nodes to handle spacing for layout algorithm
@@ -335,7 +336,7 @@ export default class Markmap{
     boxed: function (source, nodes, links) {
       var svg = this.svg;
       var state = this.state;
-      var color = this.helpers.color;
+      var color = this.colors.gray;
       this.renderers.basic.call(this, source, nodes, links);
       var node = svg.selectAll("g.markmap-node");
   
@@ -360,8 +361,9 @@ export default class Markmap{
     basic: function (source, nodes, links) {
       var svg = this.svg;
       var state = this.state;
-      var color = this.helpers.color;
-      var linkShape = this.helpers.linkShape;
+      var color = this.colors.gray;
+      var linkShape = this.linkShapes.bracket;
+      console.log(this.colors)
   
       function linkWidth(d) {
         var depth = d.depth;
