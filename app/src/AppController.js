@@ -23,15 +23,13 @@ export default class FController {
     init() {
 
         console.log("HEY");
-        d3.text("assets/map.txt", (error, text) => {
+        d3.text("assets/map1.txt", (error, text) => {
             const data = transform(parse(text));
             console.log(data);
             console.log(Markmap);
-            new Markmap('svg#mindmap', data, {
-                preset: 'default', // or default / colorful
-                linkShape: 'diagonal', // or bracket / diagonal
-            });        
+            new Markmap('svg#mindmap', data, {});        
         });
+
 
     }
 }
