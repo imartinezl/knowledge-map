@@ -1,0 +1,407 @@
+Probability and Statistics
+  Basic
+    Basic Term
+      Distance
+        Manhattan
+        Euclidean
+        Mahalanobis
+        Correlation
+      Expectation
+      Mean
+        Median
+      Variance
+        Bias-Variance trade-off
+      Covariance
+        Correlation Coefficient
+    Sample Space
+    Random Variable
+    Probability Distribution
+      Common
+        Uniform
+        Gaussian
+          GMM
+            EM Algorithm
+        Bernoulli
+        Binomial
+        Multinomial
+        Categorical
+        Dirichlet
+        Beta
+        Gamma
+        Exponential
+        Poisson
+        Chi-squared
+        t-student
+          degree of freedom
+          t-SNE
+      PDF
+      CDF
+    Independent
+    Conjugate
+    Central Limit Theorem
+  Information Theory
+    KL Divergence
+    Cross Entropy
+      Uncertainty
+    Shannon Entropy
+  Model
+    Discriminative
+      Linear Regression
+    Generative
+      Unsupervised
+        VAE
+        GAN
+      Supervised
+        Naive Bayes
+        Linear Discriminant Analysis
+        Logistic Regression
+  Bayesian
+    Joint Probability
+    Posterior
+    Prior
+    Evidence
+    Likelihood
+      Marginal Probability
+    Inference
+      Bayesian Inference
+        Variational
+          Mean Field Approximate
+          Reparameterization Trick
+      Statistical Hypothesis
+        T-test
+          p-value
+          Significance level
+        ANOVA
+          Bonferroni
+      Estimator
+        Statistical Estimation
+        Parameter Estimator
+          Bayesian Estimate
+          MAP
+          MLE
+    Sampling
+      Monte Carlo Method
+      Markov Chain
+      Gibbs
+      Metropolis-Hastings
+      MCMC
+      Hamiltonian Monte Carlo
+Machine Learning
+  Supervised Learning
+    Regression
+      Linear Regression
+        MSE
+        Regularized
+          Ridge L2
+          LASSO L1
+          Elastic Net L1 + L2
+      Logistic Regression
+        From generative to Discriminative Proof
+          Logits
+          Activation Function
+            Sigmoid
+            tanh
+            ReLu
+            Leaky ReLu
+            ELU
+        Max Likelihood == Min Cross Entropy Proof
+          Gradient Descent
+            Taylor Series Proof
+            Convex Function
+              Jensen's inequality
+            Learning Rate
+            Gradient Vaninshing & Exploding
+            Backpropagation Proof
+            Finite Difference Method
+            SGD (batch=1)
+              Optimization
+                Momentum
+                Adagrad
+                RMSProp
+                AdaDelta
+                Adam
+      SVM
+        Lagrangian approach
+        KKT condition
+          Duality
+            Primal Problem
+            Dual Problem
+        Kernel SVM
+          Mapping Function
+          Kernel Trick
+      Random Forest Regression
+      Gradient Boosting Regression
+  Unsupervised Learning
+    Clustering
+      Hierarchical
+      Partitional
+        K-means
+      Density Based
+        DBScan
+        Auto-encoders
+        Self-Organizing-Networks
+      Instance-based Learning
+    Anomaly Detection
+      One-class SVM
+      Cluster Analysis
+      Isolation Forest
+    Dimensionality Reduction
+      Eigen Decomposition
+        Eigen Value
+        Eigen Vector
+        Matrix Properties
+          Idempotent
+          Square Matrix
+          Symmetric
+          Orthogonal
+          Singular
+        Matrix Concepts
+          Projection
+          Determinant
+        PCA
+        LDA
+        SVD
+  Reinforcement Learning
+    Monte Carlo Methods
+    Q-Learning
+  Time Series
+    Moving Average
+    Autoregressive
+    ARMA
+    ARIMA
+    GARCH
+    Seasonal Decomposition
+  Artificial Neural Networks
+    Perceptron
+    Fully Connected Neural Network
+    Backpropagation
+      Cost Function
+  Deep Learning
+    Convolutional Netural Networks
+    Generative Adversarial Networks
+    Recurrent Neural Networks
+      LSTM
+      GRU
+      Bi-directional RNN
+  Computer Vision
+    Object Identification
+    Object Segmentation
+    Object Detection
+  Natural Language Processing
+    Sentiment Analysis
+  Model Training
+    Data Splitting
+      Training
+      Validation
+      Test
+      K-fold cross Validation
+    Over-fitting (high variance)
+      Cross-validation
+      Regularization
+        Early Stopping
+        Weight Decay
+        Dropout
+        Normalization
+          Rescaling
+          Standarization
+          Scaling to unit length
+      Feature Reduction
+        Manual
+        Automatic
+    Under-fitting (high-bias)
+    Score
+      Diagnosing Model
+        Variance-Bias
+      Confusion Matrix
+        Accuracy
+        Precision
+        Recall/Sensitivity
+        Specificity
+        ROC
+          AUC
+        Kappa
+        F1 Score
+          Type I Error
+          Type II Error
+  Ensemble Modelling
+    Types
+      Averaging
+      Majority Vote
+      Weighted Average
+    Bagging
+    Boosting
+      XGBoost
+      GBM
+      ADABOOST
+    Stacking
+  Labelling Data
+    Manual Labelling
+    Crowd Source
+      Amazon Mechanical Turk
+    Synthetic Labelling
+  Data Preprocessing
+    Data Types
+      Nominal
+      Ordinal
+      Interval
+      Ratio
+    Feature cleaning
+      Missing values
+      Special values
+      Outliers
+      Obvious inconsistencies
+    Feature Imputation
+      Hot-deck
+      Cold-deck
+      Mean-substitution
+      Regression
+    Feature Engineering
+      Decompose
+      Discretization
+        Continuous Features
+        Categorical Features
+      Reframe Numerical Quantities
+      Crossing
+    Feature Encoding
+      Label Encoding
+      One-hot Encoding
+    Feature Selection
+      Correlation
+      Covariance
+      Dimensionality Reduction
+        PCA
+        SVD
+      Importance
+        Filter Methods
+        Wrapper Methods
+          Forward Selection
+          Backward Elimination
+          Recursive Feature Elimination
+          Genetic Algorithms
+        Embedded Methods
+          Lasso Regression
+          Ridge Regression
+Programming Languages
+  General
+    C, C++
+    Java
+    Python
+  Data Computation
+    R
+    Matlab
+    Julia
+    Scala
+  Web Application
+    Flask
+    Django
+    React
+    Angular
+    Dash
+    Shiny
+    Carto
+    Tableau
+Data Analytics
+  Data Exploration
+  Finantial Analysis
+  Marketing Analysis
+  Business Administration
+  Visual Analytics
+Business Intelligence
+  PowerBI
+  Tableau
+  Google Data Studio
+Data Visualization
+  Variable Identification
+    Predictor
+    Target
+  Univariate Analysis
+    Continuous Features
+      Mean
+      Median
+      Mode
+      Min
+      Max
+      Range
+      Quartile
+      IQR
+      Variance
+      Standard Deviation
+      Skewness
+      Histogram
+      Box Plot
+    Categorical Features
+      Frequency
+      Histogram
+  Bi-variate Analysis
+    Scatter Plot
+    Correlation Plot - Heatmap
+    Two-way Table
+    Chi-Square Test
+    Z-Test / T-Test
+    ANOVA
+  Tools
+    Tableau
+    SAS
+    Excel
+    R
+      ggplot2
+    Python
+      matplotlib
+      plotly
+      seaborn
+    JS
+      Chart.js
+      Highcharts
+      D3.js
+      Three.js
+    Maps
+      Google Maps API
+      Here Maps API
+      OpenStreetMap
+      Mapbox
+      CartoDB
+      Leaflet.js
+Big Data
+  Hadoop
+    Zookeeper
+    Hive
+    Processing
+  Data Streaming
+    Spark
+    Flink
+    Storm
+    Kafka
+  Data Flow
+    Airflow
+Data Storages
+  SQL databases
+    SQLite
+    MySQL
+    PostgreSQL
+  NoSQL databases
+    Redis
+    Cassandra
+    MongoDb
+    HBase
+  Time Series databases
+    Influx DB
+    Graphite
+    OpenTSDB
+    Kairos DB
+    Prometheus
+  Cloud databases
+    Google BigTable
+    Amazon RDS
+    Amazon Dynamo DB
+  Cloud Storages
+    Amazon S3
+    Amazon Glacier
+Data Engineering
+  Data ingestion
+  Data cleaning
+  Data scraping
+    Scrapy
+    Selenium
+    BeautifulSoup
+  Search Engines
+    Elastic Search
