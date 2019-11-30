@@ -1,30 +1,20 @@
 // import { flextree } from 'd3-flextree';
 import * as d3 from 'd3';
 import d3_layout_flextree from './d3-flextree';
-
-var assign = Object.assign || function (dst, src) {
-  // poor man's Object.assign()
-  for (var k in src) {
-    if (src.hasOwnProperty(k)) {
-      dst[k] = src[k];
-    }
-  }
-  return dst;
-};
+// const flextree = require('d3-flextree').flextree;
 
 var getTextSize = (text, font) => {
   // return text.length * 10;
   // re-use canvas object for better performance
   var canvas = getTextSize.canvas || (getTextSize.canvas = document.createElement("canvas"));
-  canvas = document.getElementById("canvas");
+  // canvas = document.getElementById("canvas");
   var context = canvas.getContext("2d");
-  context.clearRect(0,0,canvas.width,canvas.height);
-  context.font = "35pt Bebas Neue";
-  context.fillText("KNOWLEDGE MAP",canvas.width/2, canvas.height/2); 
+  // context.clearRect(0, 0, canvas.width, canvas.height);
+  context.font = font;
+  // context.fillText("KNOWLEDGE MAP", canvas.width / 2, canvas.height / 2);
   var metrics = context.measureText(text);
   return metrics;
 };
-
 var traverseBranchId = (node, branch, state) => {
   if (!("branch" in node)) {
     node.branch = branch;
@@ -35,7 +25,6 @@ var traverseBranchId = (node, branch, state) => {
     });
   }
 }
-
 var traverseDummyNodes = (node) => {
   if (node.children) {
     node.children.forEach(traverseDummyNodes);
@@ -47,7 +36,6 @@ var traverseDummyNodes = (node) => {
     }];
   }
 }
-
 var traverseTruncateLabels = (node, length) => {
   if (node.name.length > length) {
     node.name = node.name.slice(0, length - 1) + '\u2026';
@@ -58,62 +46,76 @@ var traverseTruncateLabels = (node, length) => {
     });
   }
 }
-export default class Markmap{
+export default class Markmap {
 
-  constructor(svg, data, options){
+  constructor(svg, data, options) {
     this.init(svg, data, options);
+    this.initEvents();
+  }
 
+  initEvents() {
+    document.getElementById("autofit").addEventListener("click", this.autoFit.bind(this));
+    document.getElementById("zoomIn").addEventListener("click", this.zoomIn.bind(this));
+    document.getElementById("zoomOut").addEventListener("click", this.zoomOut.bind(this));
+  }
+
+  zoomIn() {
+    this.updateZoomCenter(this.state.zoomTranslate, this.state.zoomScale * 1.1);
+  }
+  zoomOut() {
+    this.updateZoomCenter(this.state.zoomTranslate, this.state.zoomScale / 1.1);
+  }
+  updateZoomCenter = (translate, scale) => {
+    this.state.zoomTranslate = translate; // to review
+    this.state.zoomScale = scale;
+    this.zoom
+      .translate(this.state.zoomTranslate)
+      .scale(this.state.zoomScale)
+
+    // this.svg.style("transform-origin", "50% 50% 0");
+    this.svg.attr("transform", "translate(" + this.state.zoomTranslate + ")" + " scale(" + this.state.zoomScale + ")")
   }
 
 
+  font = '15pt Bebas Neue'
   config = {
-    nodeHeight: 30,
-    nodeWidth: 0,
-    nodePadding: 12,
-    spacingVertical: 10,
-    spacingHorizontal: 30,
-    truncateLabels: 0,
-    duration: 500,
+    circleRadius: 3,
+    color: 'category20', // category20 or gray
+    duration: 300,
+    font: this.font,
     layout: 'tree',
-    color: 'gray', // category20 or gray
     linkShape: 'diagonal',
+    nodeHeight: parseInt(this.font),
+    nodePaddingHorizontal: 12,
+    nodePaddingVertical: 20,
+    nodeSeparation: 50,
     renderer: 'boxed', // basic or boxed
-    font: '35pt Bebas Neue',
+    spacingVertical: 30,
+    spacingHorizontal: 300,
+    truncateLabels: 0,
   };
 
   getInitialState = () => {
     return {
       zoomScale: 1,
       zoomTranslate: [0, 0],
-      autoFit: true,
+      autoFit: false,
       depthMaxSize: {},
       yByDepth: {},
-      // nodeFont: '35pt Bebas Neue' //sans-serif'
     };
   }
 
-  presets = {
-    'default': this.config,
-    'colorful': { ...this.config,
-      nodeHeight: 10,
-      renderer: 'basic',
-      color: 'category20',
-      nodePadding: 6
-    }
-  }  
-  helperNames = ['layout','linkShape','color']
   layouts = {
     tree: (self) => {
       return d3_layout_flextree()
         .setNodeSizes(true)
-        .nodeSize( (d) => {
+        .nodeSize((d) => {
           var metrics = getTextSize(d.name, self.config.font);
           var width = metrics.width;
-          console.log(parseInt('35pt Bebas Neue'))
-          var height = 35;
+          var height = parseInt(self.config.font);
           if (!d.dummy && width > 0) {
             // Add padding non-empty nodes
-            width += 2 * self.state.nodePadding;
+            width += 2 * self.state.nodePaddingHorizontal + self.state.nodeSeparation;
           }
           return [height, width];
         })
@@ -134,25 +136,19 @@ export default class Markmap{
       };
     }
   }
-  colors = assign(
-    { gray: function () { return function () { return '#929292'; } } },
-    d3.scale
-  )
+  colors = { ...d3.scale, ...{ gray: function () { return function () { return '#929292'; } } } }
 
   init = (svg, data, options) => {
     options = options || {};
-    
+
     svg = svg.datum ? svg : d3.select(svg);
-    
+
     this.i = 0;
     this.state = this.getInitialState();
-    this.state = {...this.state, ...this.config};
-    // this.set(this.presets[options.preset || 'default']);
+    this.state = { ...this.state, ...this.config };
     this.state.height = svg.node().getBoundingClientRect().height;
     this.state.width = svg.node().getBoundingClientRect().width;
-    console.log(this.state)
-    // this.set(options);
-  
+
     // disable panning using right mouse button
     svg.on("mousedown", function () {
       var ev = d3.event;
@@ -160,23 +156,24 @@ export default class Markmap{
         ev.stopImmediatePropagation();
       }
     });
-  
+
     this.zoom = d3.behavior.zoom()
+      .scaleExtent([0.4, 2])
       .on("zoom", function () {
         this.updateZoom(d3.event.translate, d3.event.scale);
       }.bind(this));
-  
+
     this.svg = svg
       .call(this.zoom)
       .append("g");
-  
+
     this.updateZoom(this.state.zoomTranslate, this.state.zoomScale);
-  
+
     this.setData(data);
-    this.update(this.state.root);
-  
-    // if (options.autoFit === undefined || options.autoFit === null) {
-    //   state.autoFit = false;
+    this.update(this.state.root, true);
+
+    // if (this.state.autoFit === undefined || this.state.autoFit === null) {
+    //   this.state.autoFit = false;
     // }
   }
   updateZoom = (translate, scale) => {
@@ -187,54 +184,37 @@ export default class Markmap{
       .scale(this.state.zoomScale);
     this.svg.attr("transform", "translate(" + this.state.zoomTranslate + ")" + " scale(" + this.state.zoomScale + ")")
   }
-  set = (values) => {
-    if (values.preset) {
-      console.log('preset')
-      this.set(this.presets[values.preset]);
-    }
-    console.log('not preset')
-    var state = this.state;
-    var helpers = this.helpers;
-    this.helperNames.forEach(function (h) {
-      if (!helpers[h] || (values[h] && values[h] !== state[h])) {
-        helpers[h] = this[h + 's'][values[h] || state[h]](this);
-      }
-    }.bind(this));
-    assign(state, values || {});
-    console.log(this.state)
-    return this;
-  }
   preprocessData = (data, prev) => {
     var state = this.state;
-  
+
     if (state.truncateLabels) {
       traverseTruncateLabels(data, state.truncateLabels);
     }
-  
+
     if (data.children) {
       data.children.forEach(function (d, i) {
         traverseBranchId(d, i, state);
       });
     }
-  
+
     if (prev) {
       this.diffTreeState(data, prev);
     }
   }
   setData = (data) => {
-  
+
     this.preprocessData(data, this.state.root);
-  
+
     this.state.root = data;
     this.state.root.x0 = this.state.height / 2;
     this.state.root.y0 = 0;
-  
+
     return this;
   }
   diffTreeState = (next, prev) => {
     var childrenNext = next.children;
     var childrenPrev = prev.children || prev._children;
-  
+
     if (childrenNext && childrenPrev) {
       // if number of children is different (nodes we likely added or removed) we create a name based index
       // else we use position based comparison as nodes were likely just renamed
@@ -246,7 +226,7 @@ export default class Markmap{
           return res;
         }, {});
       }
-  
+
       for (var k = 0; k < childrenNext.length; k += 1) {
         var child;
         if (idx) {
@@ -258,25 +238,26 @@ export default class Markmap{
         } else {
           child = childrenPrev[k];
         }
-  
+
         if (child) {
           this.diffTreeState(childrenNext[k], child);
         }
       }
-  
+
       if (prev._children) {
         next._children = next.children;
         delete next.children;
       }
     }
-  
+
     return next;
   }
-  update = (source) => {
+
+  update = (source, autoFit = false) => {
     var state = this.state;
     source = source || state.root;
     var res = this.layout(state);
-    if (state.autoFit) {
+    if (autoFit) {
       var minX = d3.min(res.nodes, function (d) { return d.x; });
       var minY = d3.min(res.nodes, function (d) { return d.y; });
       var maxX = d3.max(res.nodes, function (d) { return d.x; });
@@ -293,18 +274,20 @@ export default class Markmap{
     this.render(source, res.nodes, res.links);
     return this;
   }
+  autoFit() {
+    this.update(this.state.root, true);
+  }
   layout = (state) => {
-    var layout = this.layouts.tree(this);
-    console.log(layout)
-  
+    var layout_ = this.layouts.tree(this);
+
     if (state.linkShape !== 'bracket') {
       // Fill in with dummy nodes to handle spacing for layout algorithm
       traverseDummyNodes(state.root);
     }
-  
+
     // Compute the new tree layout.
-    var nodes = layout.nodes(state.root).reverse();
-  
+    var nodes = layout_.nodes(state.root).reverse();
+
     // Remove dummy nodes after layout is computed
     nodes = nodes.filter(function (n) { return !n.dummy; });
     nodes.forEach(function (n) {
@@ -315,15 +298,15 @@ export default class Markmap{
         n.parent = n.parent.parent;
       }
     });
-  
+
     if (state.linkShape === 'bracket') {
       nodes.forEach(function (n) {
         n.y += n.depth * state.spacingHorizontal;
       });
     }
-  
-    var links = layout.links(nodes);
-  
+
+    var links = layout_.links(nodes);
+
     return {
       nodes: nodes,
       links: links
@@ -336,24 +319,24 @@ export default class Markmap{
     boxed: function (source, nodes, links) {
       var svg = this.svg;
       var state = this.state;
-      var color = this.colors.gray;
+      var color = this.colors[this.state.color]();
       this.renderers.basic.call(this, source, nodes, links);
       var node = svg.selectAll("g.markmap-node");
-  
+
       node.select('rect')
-        .attr("y", -state.nodeHeight / 2)
+        .attr("y", -(state.nodeHeight + state.nodePaddingVertical) / 2)
         .attr('rx', 10)
         .attr('ry', 10)
-        .attr('height', state.nodeHeight)
-        .attr('fill', function (d) { return d3.rgb(color(d.branch)).brighter(1.2); })
+        .attr('height', state.nodeHeight + state.nodePaddingVertical)
+        .attr('fill', function (d) { return d3.rgb(color(d.depth)).brighter(1.2); })
         .attr('stroke', function (d) { return color(d.branch); })
         .attr('stroke-width', 1)
         .attr('cursor', 'pointer');
-  
+
       node.select('text')
-        .attr("dy", "5")
+        .attr("dy", state.nodeHeight / 2)
         .attr('cursor', 'pointer');
-  
+
       svg.selectAll("path.markmap-link")
         .attr('stroke-width', 1)
         .attr('fill', 'none');
@@ -361,10 +344,9 @@ export default class Markmap{
     basic: function (source, nodes, links) {
       var svg = this.svg;
       var state = this.state;
-      var color = this.colors.gray;
-      var linkShape = this.linkShapes.bracket;
-      console.log(this.colors)
-  
+      var color = this.colors[this.state.color]();
+      var linkShape = this.linkShapes[this.state.linkShape]();
+
       function linkWidth(d) {
         var depth = d.depth;
         if (d.name !== '' && d.children && d.children.length === 1 && d.children[0].name === '') {
@@ -372,82 +354,88 @@ export default class Markmap{
         }
         return Math.max(6 - 2 * depth, 1.5);
       }
-  
+      
       // Update the nodes…
       var node = svg.selectAll("g.markmap-node")
         .data(nodes, function (d) { return d.id || (d.id = ++this.i); }.bind(this));
-  
+
       // Enter any new nodes at the parent's previous position.
       var nodeEnter = node.enter().append("g")
         .attr("class", "markmap-node")
-        .attr("transform", function (d) { return "translate(" + (source.y0 + source.y_size - d.y_size) + "," + source.x0 + ")"; })
+        .attr("transform", function (d) { return "translate(" + (source.y0 + source.y_size - d.y_size - state.nodeSeparation) + "," + (source.x0) + ")"; })
         .on("click", this.click.bind(this));
-  
+
       nodeEnter.append('rect')
         .attr('class', 'markmap-node-rect')
         .attr("y", function (d) { return -linkWidth(d) / 2 })
         .attr('x', function (d) { return d.y_size; })
         .attr('height', linkWidth)
         .attr('fill', function (d) { return color(d.branch); });
-  
+
       nodeEnter.append("circle")
         .attr('class', 'markmap-node-circle')
-        .attr('cx', function (d) { return d.y_size; })
+        .attr('cx', function (d) { return d.y_size - state.nodeSeparation; })
         .attr('stroke', function (d) { return color(d.branch); })
         .attr("r", 1e-6)
-        .style("fill", function (d) { return d._children ? color(d.branch) : ''; });
-  
+        .style("fill", function (d) { return d._children ? color(d.branch) : ''; })
+        .attr('cursor', 'pointer');
+
       nodeEnter.append("text")
         .attr('class', 'markmap-node-text')
         .attr("x", function (d) { return d.y_size; })
         .attr("dy", "-5")
         .attr("text-anchor", function (d) { return "start"; })
         .text(function (d) { return d.name; })
-        .style("fill-opacity", 1e-6);
-  
+        .style("fill-opacity", 1e-6)
+        .attr('cursor', 'pointer');
+
       // Transition nodes to their new position.
       var nodeUpdate = node.transition()
         .duration(state.duration)
-        .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; });
-  
+        .attr("transform", function (d) { return "translate(" + (d.y) + "," + (d.x) + ")"; });
+
       nodeUpdate.select('rect')
         .attr('x', -1)
-        .attr('width', function (d) { return d.y_size; });
-  
+        .attr('stroke-opacity', 1)
+        .style("fill-opacity", 1)
+        .attr('width', function (d) { return d.y_size - state.nodeSeparation; });
+
       nodeUpdate.select("circle")
-        .attr("r", 4.5)
+        .attr("r", state.circleRadius)
         .style("fill", function (d) { return d._children ? color(d.branch) : ''; })
         .style('display', function (d) {
           var hasChildren = d.href || d.children || d._children;
           return hasChildren ? 'inline' : 'none';
         });
-  
+
       nodeUpdate.select("text")
         .attr("x", 10)
         .style("fill-opacity", 1);
-  
+
       // Transition exiting nodes to the parent's new position.
       var nodeExit = node.exit().transition()
         .duration(state.duration)
-        .attr("transform", function (d) { return "translate(" + (source.y + source.y_size - d.y_size) + "," + source.x + ")"; })
+        .attr("transform", function (d) { return "translate(" + (source.y + source.y_size - d.y_size - state.nodeSeparation) + "," + source.x + ")"; })
         .remove();
-  
+
       nodeExit.select('rect')
         .attr('x', function (d) { return d.y_size; })
-        .attr('width', 0);
-  
+        // .attr('width', 0)
+        .attr('stroke-opacity', 1e-6)
+        .style("fill-opacity", 1e-6)
+
       nodeExit.select("circle")
         .attr("r", 1e-6);
-  
+
       nodeExit.select("text")
+        .attr("x", function (d) { return d.y_size; })
         .style("fill-opacity", 1e-6)
-        .attr("x", function (d) { return d.y_size; });
-  
-  
+
+
       // Update the links…
       var link = svg.selectAll("path.markmap-link")
         .data(links, function (d) { return d.target.id; });
-  
+
       // Enter any new links at the parent's previous position.
       link.enter().insert("path", "g")
         .attr("class", "markmap-link")
@@ -455,28 +443,28 @@ export default class Markmap{
         .attr('stroke', function (d) { return color(d.target.branch); })
         .attr('stroke-width', function (l) { return linkWidth(l.target); })
         .attr("d", function (d) {
-          var o = { x: source.x0, y: source.y0 + source.y_size };
+          var o = { x: source.x0, y: source.y0 + source.y_size - state.nodeSeparation };
           return linkShape({ source: o, target: o });
         });
-  
+
       // Transition links to their new position.
       link.transition()
         .duration(state.duration)
         .attr("d", function (d) {
-          var s = { x: d.source.x, y: d.source.y + d.source.y_size };
+          var s = { x: d.source.x, y: d.source.y + d.source.y_size - state.nodeSeparation };
           var t = { x: d.target.x, y: d.target.y };
           return linkShape({ source: s, target: t });
         });
-  
+
       // Transition exiting nodes to the parent's new position.
       link.exit().transition()
         .duration(state.duration)
         .attr("d", function (d) {
-          var o = { x: source.x, y: source.y + source.y_size };
+          var o = { x: source.x, y: source.y + source.y_size - state.nodeSeparation };
           return linkShape({ source: o, target: o });
         })
         .remove();
-  
+
       // Stash the old positions for transition.
       nodes.forEach(function (d) {
         d.x0 = d.x;
