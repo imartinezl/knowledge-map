@@ -1,44 +1,47 @@
 Probability and Statistics
   Basic
-    Basic Term
-      Distance
-        Manhattan
-        Euclidean
-        Mahalanobis
-        Correlation
-      Expectation
-      Mean
-        Median
-      Variance
-        Bias-Variance trade-off
-      Covariance
-        Correlation Coefficient
-    Sample Space
-    Random Variable
-    Probability Distribution
-      Common
-        Uniform
-        Gaussian
-          GMM
-            EM Algorithm
-        Bernoulli
-        Binomial
-        Multinomial
-        Categorical
-        Dirichlet
-        Beta
-        Gamma
-        Exponential
-        Poisson
-        Chi-squared
-        t-student
-          degree of freedom
-          t-SNE
+    Introduction
+      Axioms of Probability
+      Sample Space
+      Permutation
+      Combination
+      Bayes Rule
+      Independent
+      Conjugate
+      Central Limit Theorem
+    Random Variables
+      Random Variable
+        Expectation
+        Moments of Distribution
+          K-th Moment
+          Chebyshev's Inequality
+        Mean
+          Median
+        Variance
+          Standard Deviation
+          Bias-Variance trade-off
+        Covariance
+          Correlation Coefficient
       PDF
       CDF
-    Independent
-    Conjugate
-    Central Limit Theorem
+    Probability Distribution
+      Uniform
+      Gaussian
+        GMM
+          EM Algorithm
+      Bernoulli
+      Binomial
+      Multinomial
+      Categorical
+      Dirichlet
+      Beta
+      Gamma
+      Exponential
+      Poisson
+      Chi-squared
+      t-student
+        degree of freedom
+        t-SNE
   Information Theory
     KL Divergence
     Cross Entropy
@@ -86,6 +89,38 @@ Probability and Statistics
       Metropolis-Hastings
       MCMC
       Hamiltonian Monte Carlo
+Linear Algebra and Calculus
+  General Notations
+    Vector
+    Matrix Types
+      Identity
+      Diagonal
+      Idempotent
+      Square
+      Symmetric
+      Orthogonal
+      Singular
+    Matrix Operations
+      Transpose
+      Inverse
+      Trace
+      Determinant
+    Matrix Properties
+      Symmetric Decomposition
+      Norm
+        Manhattan L1
+        Euclidean L2
+        p-norm LP
+        Infinity Linf
+      Linearly Dependence
+      Rank
+      Positive semi-definite
+      Eigenvalue
+      Eigenvector
+      Singular-value decomposition
+    Matrix Calculus
+      Gradient
+      Hessian
 Machine Learning
   Supervised Learning
     Regression
@@ -146,21 +181,9 @@ Machine Learning
       Cluster Analysis
       Isolation Forest
     Dimensionality Reduction
-      Eigen Decomposition
-        Eigen Value
-        Eigen Vector
-        Matrix Properties
-          Idempotent
-          Square Matrix
-          Symmetric
-          Orthogonal
-          Singular
-        Matrix Concepts
-          Projection
-          Determinant
-        PCA
-        LDA
-        SVD
+      PCA
+      LDA
+      SVD
   Reinforcement Learning
     Monte Carlo Methods
     Q-Learning
@@ -212,17 +235,31 @@ Machine Learning
     Score
       Diagnosing Model
         Variance-Bias
-      Confusion Matrix
-        Accuracy
-        Precision
-        Recall/Sensitivity
-        Specificity
-        ROC
-          AUC
-        Kappa
-        F1 Score
+      Classification
+        Confusion Matrix
+          TP/FP/TN/FN
           Type I Error
           Type II Error
+        Main Metrics
+          Accuracy
+          Precision
+          Recall/Sensitivity
+          Specificity
+          ROC
+            AUC
+          Kappa
+          F1 Score
+      Regression
+        Basic Metrics
+          SS_tot: Total sum of squares
+          SS_reg: Explained sum of squares
+          SS_res: Residual sum of squares
+        Coefficient of determination R2
+        Main Metrics
+          Mallow's Cp
+          AIC
+          BIC
+          Adjusted R2
   Ensemble Modelling
     Types
       Averaging
@@ -405,3 +442,16 @@ Data Engineering
     BeautifulSoup
   Search Engines
     Elastic Search
+Libraries
+  Data wrangling
+    Numpy
+    Pandas
+    Dplyr
+    Tidyr
+  ML Models
+    Scikit-Learning
+    Tensorflow
+    PyTorch
+    MXNet
+    Keras
+    
