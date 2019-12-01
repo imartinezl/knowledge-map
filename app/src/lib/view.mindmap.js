@@ -46,6 +46,7 @@ var traverseTruncateLabels = (node, length) => {
     });
   }
 }
+
 export default class Markmap {
 
   constructor(svg, data, options) {
@@ -57,6 +58,7 @@ export default class Markmap {
     document.getElementById("autofit").addEventListener("click", this.autoFit.bind(this));
     document.getElementById("zoomIn").addEventListener("click", this.zoomIn.bind(this));
     document.getElementById("zoomOut").addEventListener("click", this.zoomOut.bind(this));
+    document.getElementById("depth").addEventListener("click", this.depthIn.bind(this));
   }
 
   zoomIn() {
@@ -75,7 +77,26 @@ export default class Markmap {
     // this.svg.style("transform-origin", "50% 50% 0");
     this.svg.attr("transform", "translate(" + this.state.zoomTranslate + ")" + " scale(" + this.state.zoomScale + ")")
   }
-
+  traverseDepth = (node) => {
+    // console.log(node.name, node.children, node.depth)
+    if(node.children !== undefined & node.children !== null & node.depth >= this.depth){
+      node.children.forEach(this.traverseDepth);
+      node._children = node.children;
+      node.children = null;
+    }else if(node.children !== undefined & node.children !== null & node.depth < this.depth){
+      node.children.forEach(this.traverseDepth);
+    }else if(node._children !== undefined & node.depth >= this.depth){
+      node._children.forEach(this.traverseDepth);
+      node.children = node._children;
+      node._children = null;
+    }
+  }
+  depth = 4;
+  depthIn() {
+    this.depth = document.getElementById('depth_layer').value*2;
+    this.traverseDepth(this.state.root);
+    this.update(this.state.root, true)
+  }
 
   font = '15pt Bebas Neue'
   config = {
@@ -172,6 +193,8 @@ export default class Markmap {
     this.setData(data);
     this.update(this.state.root, true);
 
+
+
     // if (this.state.autoFit === undefined || this.state.autoFit === null) {
     //   this.state.autoFit = false;
     // }
@@ -253,6 +276,8 @@ export default class Markmap {
     return next;
   }
 
+
+
   update = (source, autoFit = false) => {
     var state = this.state;
     source = source || state.root;
@@ -279,7 +304,6 @@ export default class Markmap {
   }
   layout = (state) => {
     var layout_ = this.layouts.tree(this);
-
     if (state.linkShape !== 'bracket') {
       // Fill in with dummy nodes to handle spacing for layout algorithm
       traverseDummyNodes(state.root);
@@ -346,9 +370,9 @@ export default class Markmap {
       var state = this.state;
       var color = this.colors[this.state.color]();
       var linkShape = this.linkShapes[this.state.linkShape]();
-      
-      if(!nodes[0].color){
-        for(var i in nodes){
+
+      if (!nodes[0].color) {
+        for (var i in nodes) {
           nodes[i].color = color(nodes[i].depth);
         }
       }
@@ -360,7 +384,7 @@ export default class Markmap {
         }
         return Math.max(6 - 2 * depth, 1.5);
       }
-      
+
       // Update the nodes…
       var node = svg.selectAll("g.markmap-node")
         .data(nodes, function (d) { return d.id || (d.id = ++this.i); }.bind(this));
@@ -369,7 +393,7 @@ export default class Markmap {
       var nodeEnter = node.enter().append("g")
         .attr("class", "markmap-node")
         .attr("transform", function (d) { return "translate(" + (source.y0 + source.y_size - d.y_size - state.nodeSeparation) + "," + (source.x0) + ")"; })
-        .on("click", this.click.bind(this));
+        .on("click", this.click.bind(this))
 
       nodeEnter.append('rect')
         .attr('class', 'markmap-node-rect')
@@ -476,6 +500,8 @@ export default class Markmap {
         d.x0 = d.x;
         d.y0 = d.y;
       });
+
+
     }
   }
   // Toggle children on click.
