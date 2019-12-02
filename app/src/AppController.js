@@ -14,7 +14,7 @@ import parse from './lib/parse.txtmap';
 import transform from './lib/transform.headings';
 
 
-export default class FController {
+export default class AppController {
 
     constructor() {
 
@@ -23,12 +23,17 @@ export default class FController {
     init() {
 
         console.log("HEY");
-        d3.text("assets/map1.txt", (error, text) => {
-            const data = transform(parse(text));
-            console.log(data);
-            console.log(Markmap);
-            new Markmap('svg#mindmap', data, {});        
+        var font = '15pt Bebas Neue';
+        document.fonts.load(font).then( () => {
+            console.log('font loaded');
+            d3.text("./assets/map.txt", (error, text) => {
+                const data = transform(parse(text));
+                console.log(data);
+                console.log(Markmap);
+                new Markmap('svg#mindmap', data, {});        
+            });
         });
+
 
 
     }
