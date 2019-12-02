@@ -52,6 +52,7 @@ export default class Markmap {
   constructor(svg, data, options) {
     this.init(svg, data, options);
     this.initEvents();
+    this.depthIn();
   }
 
   initEvents() {
