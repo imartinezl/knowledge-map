@@ -2,19 +2,9 @@
 import * as d3 from 'd3';
 import d3_layout_flextree from './d3-flextree';
 // const flextree = require('d3-flextree').flextree;
+import '../style.css';
 
-var getTextSize = (text, font) => {
-  // return text.length * 10;
-  // re-use canvas object for better performance
-  var canvas = getTextSize.canvas || (getTextSize.canvas = document.createElement("canvas"));
-  // canvas = document.getElementById("canvas");
-  var context = canvas.getContext("2d");
-  // context.clearRect(0, 0, canvas.width, canvas.height);
-  context.font = font;
-  // context.fillText("KNOWLEDGE MAP", canvas.width / 2, canvas.height / 2);
-  var metrics = context.measureText(text);
-  return metrics;
-};
+
 var traverseBranchId = (node, branch, state) => {
   if (!("branch" in node)) {
     node.branch = branch;
@@ -50,9 +40,18 @@ var traverseTruncateLabels = (node, length) => {
 export default class Markmap {
 
   constructor(svg, data, options) {
+    this.initCanvas();
     this.init(svg, data, options);
     this.initEvents();
-    this.depthIn();
+    // this.depthIn();
+  }
+
+  initCanvas() {
+    this.canvas = document.createElement("canvas");
+    this.context = this.canvas.getContext("2d");
+    // context.clearRect(0, 0, canvas.width, canvas.height);
+    this.context.font = this.font;
+    // this.context.strokeText("KNOWLEDGE MAP", canvas.width / 2, canvas.height / 2);
   }
 
   initEvents() {
@@ -61,7 +60,6 @@ export default class Markmap {
     document.getElementById("zoomOut").addEventListener("click", this.zoomOut.bind(this));
     document.getElementById("depth").addEventListener("click", this.depthIn.bind(this));
   }
-
   zoomIn() {
     this.updateZoomCenter(this.state.zoomTranslate, this.state.zoomScale * 1.1);
   }
@@ -92,13 +90,12 @@ export default class Markmap {
       node._children = null;
     }
   }
-  depth = 4;
   depthIn() {
     this.depth = document.getElementById('depth_layer').value*2;
     this.traverseDepth(this.state.root);
     this.update(this.state.root, true)
   }
-
+  depth = 2;
   font = '15pt Bebas Neue'
   config = {
     circleRadius: 5,
@@ -116,7 +113,6 @@ export default class Markmap {
     spacingHorizontal: 300,
     truncateLabels: 0,
   };
-
   getInitialState = () => {
     return {
       zoomScale: 1,
@@ -126,13 +122,18 @@ export default class Markmap {
       yByDepth: {},
     };
   }
-
+  getTextSize = (text, font) => {
+    // return {width: text.length};
+    var metrics = this.context.measureText(text);
+    return metrics;
+  };
   layouts = {
     tree: (self) => {
       return d3_layout_flextree()
         .setNodeSizes(true)
         .nodeSize((d) => {
-          var metrics = getTextSize(d.name, self.config.font);
+          var metrics = self.getTextSize(d.name, self.config.font);
+
           var width = metrics.width;
           var height = parseInt(self.config.font);
           if (!d.dummy && width > 0) {
@@ -276,9 +277,6 @@ export default class Markmap {
 
     return next;
   }
-
-
-
   update = (source, autoFit = false) => {
     var state = this.state;
     source = source || state.root;
