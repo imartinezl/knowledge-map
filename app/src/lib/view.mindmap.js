@@ -40,10 +40,42 @@ var traverseTruncateLabels = (node, length) => {
 export default class Markmap {
 
   constructor(svg, data, options) {
+    this.initConfig(svg);
     this.initCanvas();
-    this.init(svg, data, options);
+    this.initMarkmap(svg, data, options);
     this.initEvents();
     // this.depthIn();
+    
+  }
+
+  initConfig(svg){
+    this.collapsed = false;
+    this.depth = 2;
+    this.font_size = '15pt'
+    this.font_family = 'Bebas Neue'
+    this.font = this.font_size + ' ' + this.font_family
+    this.svgElement = document.getElementById(svg.split('#')[1]);
+
+    this.svgElement.style.fontFamily = this.font_family;
+    this.svgElement.style.fontSize = this.font_size;
+    
+    this.config = {
+      circleRadius: 5,
+      color: 'category10', // category20 | gray | category10 | category20b
+      duration: 300,
+      font: this.font,
+      layout: 'tree',
+      linkShape: 'diagonal',
+      nodeHeight: parseInt(this.font),
+      nodePaddingHorizontal: 12,
+      nodePaddingVertical: 12,
+      nodeSeparation: 50,
+      renderer: 'basic', // basic or boxed
+      spacingVertical: 12,
+      spacingHorizontal: 300,
+      truncateLabels: 0,
+    };
+
   }
 
   initCanvas() {
@@ -53,7 +85,6 @@ export default class Markmap {
     this.context.font = this.font;
     // this.context.strokeText("KNOWLEDGE MAP", canvas.width / 2, canvas.height / 2);
   }
-
   initEvents() {
     document.getElementById("autofit").addEventListener("click", this.autoFit.bind(this));
     document.getElementById("zoomIn").addEventListener("click", this.zoomIn.bind(this));
@@ -78,41 +109,34 @@ export default class Markmap {
   }
   traverseDepth = (node) => {
     // console.log(node.name, node.children, node.depth)
-    if(node.children !== undefined & node.children !== null & node.depth >= this.depth){
+    if (node.children !== undefined & node.children !== null & node.depth >= this.depth) {
       node.children.forEach(this.traverseDepth);
       node._children = node.children;
       node.children = null;
-    }else if(node.children !== undefined & node.children !== null & node.depth < this.depth){
+    } else if (node.children !== undefined & node.children !== null & node.depth < this.depth) {
       node.children.forEach(this.traverseDepth);
-    }else if(node._children !== undefined & node.depth >= this.depth){
+    } else if (node._children !== undefined & node.depth >= this.depth) {
       node._children.forEach(this.traverseDepth);
       node.children = node._children;
       node._children = null;
     }
   }
   depthIn() {
-    this.depth = document.getElementById('depth_layer').value*2;
+    var depth = document.getElementById('depth_layer').value * 2;
+    if (this.depth !== depth & this.collapsed) {
+      this.traverseDepth(this.state.root);
+      this.collapsed = false;
+    }
+    this.depth = depth;
     this.traverseDepth(this.state.root);
-    this.update(this.state.root, true)
+    this.update(this.state.root, true);
+    if (this.collapsed) {
+      document.getElementById('depth').textContent = 'Collapse'
+    } else {
+      document.getElementById('depth').textContent = 'Expand'
+    }
+    this.collapsed = !this.collapsed;
   }
-  depth = 2;
-  font = '15pt Bebas Neue'
-  config = {
-    circleRadius: 5,
-    color: 'category20c', // category20 or gray
-    duration: 300,
-    font: this.font,
-    layout: 'tree',
-    linkShape: 'diagonal',
-    nodeHeight: parseInt(this.font),
-    nodePaddingHorizontal: 12,
-    nodePaddingVertical: 12,
-    nodeSeparation: 50,
-    renderer: 'boxed', // basic or boxed
-    spacingVertical: 12,
-    spacingHorizontal: 300,
-    truncateLabels: 0,
-  };
   getInitialState = () => {
     return {
       zoomScale: 1,
@@ -159,9 +183,15 @@ export default class Markmap {
       };
     }
   }
-  colors = { ...d3.scale, ...{ gray: function () { return function () { return '#929292'; } } } }
+  colors = {
+    ...d3.scale, ...{
+      gray: function () {
+        return function () { return '#929292'; }
+      }
+    }
+  }
 
-  init = (svg, data, options) => {
+  initMarkmap = (svg, data, options) => {
     options = options || {};
 
     svg = svg.datum ? svg : d3.select(svg);
@@ -194,8 +224,6 @@ export default class Markmap {
 
     this.setData(data);
     this.update(this.state.root, true);
-
-
 
     // if (this.state.autoFit === undefined || this.state.autoFit === null) {
     //   this.state.autoFit = false;
@@ -342,7 +370,7 @@ export default class Markmap {
     boxed: function (source, nodes, links) {
       var svg = this.svg;
       var state = this.state;
-      var color = this.colors[this.state.color]();
+      // var color = this.colors[this.state.color]();
       this.renderers.basic.call(this, source, nodes, links);
       var node = svg.selectAll("g.markmap-node");
 
@@ -368,6 +396,10 @@ export default class Markmap {
       var svg = this.svg;
       var state = this.state;
       var color = this.colors[this.state.color]();
+      var maxDepth = Math.max.apply(Math, nodes.map(i => i.depth));
+      color = d3.scale.linear().domain([0, maxDepth])
+        .interpolate(d3.interpolateHcl)
+        .range([d3.rgb("#007AFF"), d3.rgb('#FFF500')])
       var linkShape = this.linkShapes[this.state.linkShape]();
 
       if (!nodes[0].color) {
