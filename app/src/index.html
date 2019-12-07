@@ -36,13 +36,14 @@
                     </div>
                 </div>
                 <div class="level-right">
-                    <div class="buttons has-addons">
+                    <div class="level-item buttons has-addons">
                         <button id="depthOut" class="button is-small is-rounded" type="button">
                             <span class="icon is-small">
                                 <i class="fas fa-angle-double-left"></i>
                             </span>
                             <!-- <span>Collapse Level</span> -->
                         </button>
+                        <button id="depthText" class="button is-small is-rounded is-static"></button>
                         <button id="depthIn" class="button is-small is-rounded" type="button">
                             <span class="icon is-small">
                                 <i class="fas fa-angle-double-right"></i>
@@ -53,7 +54,17 @@
                 </div>
             </nav>
             <svg id="mindmap"></svg>
-            <div class='color-picker'></div>
+            <nav class="level">
+                <div class="level-left">
+                    <div id='color-picker-A'></div>
+                    <div id='color-picker-B'></div>
+                </div>
+            </nav>
+
+
+
+
+
         </section>
 
     </div>
