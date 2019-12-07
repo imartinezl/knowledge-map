@@ -1,7 +1,7 @@
 "use strict";
 
 import AppController from './AppController';
-import './style.css';
+import './style.scss';
 
 document.addEventListener("DOMContentLoaded", () => {
     let appController = new AppController();

@@ -5,18 +5,41 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Knowledge Map</title>
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 </head>
 
 <body>
-    <p>KNOWLEDGE MAP</p>
-    <button id="autofit" type="button">Fit to Screen</button> 
-    <button id="zoomIn" type="button">Zoom In +</button> 
-    <button id="zoomOut" type="button">Zoom Out -</button> 
-    <button id="depth" type="button">Collapse</button> 
-    <input id="depth_layer" type="number" value='1'>
-    <input type="color">
+    <div class="container is-fluid">
+        <section class="section">
+            <h1 class="title">Knowledge Map</h1>
+            <svg id="mindmap"></svg>
+            <div class="buttons has-addons">
+                <button id="autofit" class="button is-small is-rounded" type="button">
+                    <span class="icon is-small">
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </span>
+                    <span>Fit to Screen</span>
+                </button>
+                <button id="zoomIn" class="button is-small is-rounded" type="button">
+                    <span class="icon is-small">
+                        <i class="fas fa-search-plus"></i>
+                    </span>
+                    <span>Zoom In +</span>
+                </button>
+                <button id="zoomOut" class="button is-small is-rounded" type="button">
+                    <span class="icon is-small">
+                        <i class="fas fa-search-minus"></i>
+                    </span>
+                    <span>Zoom Out -</span>
+                </button>
+            </div>
+            <button id="depth" class="button is-normal is-rounded" type="button">Collapse</button>
+            <input id="depth_layer" type="number" value='1'>
+            <input type="color">
+        </section>
 
-    <svg id="mindmap"></svg>
+    </div>
+
 </body>
 
 </html>
