@@ -13,6 +13,7 @@ import Markmap from './lib/view.mindmap';
 import parse from './lib/parse.txtmap';
 import transform from './lib/transform.headings';
 
+import ColorPicker from './lib/ColorPicker';
 
 export default class AppController {
 
@@ -21,7 +22,7 @@ export default class AppController {
     }
 
     init() {
-
+        new ColorPicker();
         console.log("HEY");
         var font = '15pt Bebas Neue';
         document.fonts.load(font).then( () => {
