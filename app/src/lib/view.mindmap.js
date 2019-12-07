@@ -3,6 +3,7 @@ import * as d3 from 'd3';
 import d3_layout_flextree from './d3-flextree';
 // const flextree = require('d3-flextree').flextree;
 
+
 var traverseBranchId = (node, branch, state) => {
   if (!("branch" in node)) {
     node.branch = branch;
@@ -38,24 +39,25 @@ var traverseTruncateLabels = (node, length) => {
 export default class Markmap {
 
   constructor(svg, data, options) {
-    this.initConfig(svg);
+    this.initConfig(svg, data, options);
     this.initCanvas();
     this.initMarkmap(svg, data, options);
     this.initEvents();
-    // this.depthIn();
-    
+    this.depthChange(0);  
   }
-
-  initConfig(svg){
+  
+  initConfig(svg, data, options){
     this.collapsed = false;
-    this.depth = 2;
     this.font_size = '15pt'
     this.font_family = 'Bebas Neue'
     this.font = this.font_size + ' ' + this.font_family
     this.svgElement = document.getElementById(svg.split('#')[1]);
     this.svgElement.style.fontFamily = this.font_family;
     this.svgElement.style.fontSize = this.font_size;
-    
+    this.traverseMaxDepth(data);
+    this.depth = 1; //this.maxDepth;
+  
+
     this.config = {
       circleRadius: 5,
       color: 'category10', // category20 | gray | category10 | category20b
@@ -67,14 +69,13 @@ export default class Markmap {
       nodePaddingHorizontal: 12,
       nodePaddingVertical: 12,
       nodeSeparation: 50,
-      renderer: 'basic', // basic or boxed
+      renderer: 'boxed', // basic or boxed
       spacingVertical: 12,
       spacingHorizontal: 300,
       truncateLabels: 0,
     };
 
   }
-
   initCanvas() {
     this.canvas = document.createElement("canvas");
     this.context = this.canvas.getContext("2d");
@@ -86,7 +87,8 @@ export default class Markmap {
     document.getElementById("autofit").addEventListener("click", this.autoFit.bind(this));
     document.getElementById("zoomIn").addEventListener("click", this.zoomIn.bind(this));
     document.getElementById("zoomOut").addEventListener("click", this.zoomOut.bind(this));
-    document.getElementById("depth").addEventListener("click", this.depthIn.bind(this));
+    document.getElementById("depthIn").addEventListener("click", this.depthChange.bind(this,1));
+    document.getElementById("depthOut").addEventListener("click", this.depthChange.bind(this,-1));
   }
   zoomIn() {
     this.updateZoomCenter(this.state.zoomTranslate, this.state.zoomScale * 1.1);
@@ -118,20 +120,25 @@ export default class Markmap {
       node._children = null;
     }
   }
-  depthIn() {
-    var depth = document.getElementById('depth_layer').value * 2;
-    if (this.depth !== depth & this.collapsed) {
+  maxDepth = 0;
+  traverseMaxDepth = (node) => {
+    if(node.children){
+      node.children.forEach(this.traverseMaxDepth);
+    }else{
+      if(node.depth > this.maxDepth){
+        this.maxDepth = node.depth;
+      }
+    }
+  }
+  depthChange = (incr) => {
+    var depth = Math.max(0, Math.min(this.depth + incr*2, this.maxDepth*2));
+    if (this.collapsed) { // this.depth !== depth & 
       this.traverseDepth(this.state.root);
       this.collapsed = false;
     }
     this.depth = depth;
     this.traverseDepth(this.state.root);
     this.update(this.state.root, true);
-    if (this.collapsed) {
-      document.getElementById('depth').textContent = 'Collapse'
-    } else {
-      document.getElementById('depth').textContent = 'Expand'
-    }
     this.collapsed = !this.collapsed;
   }
   getInitialState = () => {
