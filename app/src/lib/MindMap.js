@@ -2,39 +2,9 @@
 import * as d3 from 'd3';
 import d3_layout_flextree from './d3Flextree';
 // const flextree = require('d3-flextree').flextree;
+import ColorPicker from './ColorPicker';
+import Pickr from '@simonwep/pickr';
 
-
-var traverseBranchId = (node, branch, state) => {
-  if (!("branch" in node)) {
-    node.branch = branch;
-  }
-  if (node.children) {
-    node.children.forEach(function (d) {
-      traverseBranchId(d, branch, state);
-    });
-  }
-}
-var traverseDummyNodes = (node) => {
-  if (node.children) {
-    node.children.forEach(traverseDummyNodes);
-
-    node.children = [{
-      name: '',
-      dummy: true,
-      children: node.children
-    }];
-  }
-}
-var traverseTruncateLabels = (node, length) => {
-  if (node.name.length > length) {
-    node.name = node.name.slice(0, length - 1) + '\u2026';
-  }
-  if (node.children) {
-    node.children.forEach(function (n) {
-      traverseTruncateLabels(n, length);
-    });
-  }
-}
 
 export default class MindMap {
 
@@ -43,20 +13,29 @@ export default class MindMap {
     this.initCanvas();
     this.initMindMap(svg, data, options);
     this.initEvents();
-    this.depthChange(0);  
+    this.depthChange(0);
   }
   
   initConfig(svg, data, options){
-    this.collapsed = false;
     this.font_size = '15pt'
     this.font_family = 'Bebas Neue'
     this.font = this.font_size + ' ' + this.font_family
+    
     this.svgElement = document.getElementById(svg.split('#')[1]);
     this.svgElement.style.fontFamily = this.font_family;
     this.svgElement.style.fontSize = this.font_size;
+    
+    this.collapsed = false;
     this.traverseMaxDepth(data);
     this.depth = 1; //this.maxDepth;
-  
+    this.depthText = document.getElementById("depthText");
+    this.depthText.textContent = this.depth/2;
+    
+    this.newColors = false;
+    this.colorA = '#007AFF';
+    this.colorB = '#FFF500'
+    this.colorPickerA = new ColorPicker('#color-picker-A', this.colorA);
+    this.colorPickerB = new ColorPicker('#color-picker-B', this.colorB);
 
     this.config = {
       circleRadius: 5,
@@ -89,6 +68,8 @@ export default class MindMap {
     document.getElementById("zoomOut").addEventListener("click", this.zoomOut.bind(this));
     document.getElementById("depthIn").addEventListener("click", this.depthChange.bind(this,1));
     document.getElementById("depthOut").addEventListener("click", this.depthChange.bind(this,-1));
+    this.colorPickerA.pickr.on('change', this.colorChanged.bind(this));
+    this.colorPickerB.pickr.on('change', this.colorChanged.bind(this));
   }
   zoomIn() {
     this.updateZoomCenter(this.state.zoomTranslate, this.state.zoomScale * 1.1);
@@ -106,6 +87,14 @@ export default class MindMap {
     // this.svg.style("transform-origin", "50% 50% 0");
     this.svg.attr("transform", "translate(" + this.state.zoomTranslate + ")" + " scale(" + this.state.zoomScale + ")")
   }
+  colorChanged(){
+    this.newColors = true;
+    this.colorA = this.colorPickerA.getHEXAColor();
+    this.colorPickerA.pickr.setColor(this.colorA);
+    this.colorB = this.colorPickerB.getHEXAColor();
+    this.colorPickerB.pickr.setColor(this.colorB);
+    this.update(this.state.root, false);
+  }
   traverseDepth = (node) => {
     // console.log(node.name, node.children, node.depth)
     if (node.children !== undefined & node.children !== null & node.depth >= this.depth) {
@@ -115,6 +104,10 @@ export default class MindMap {
     } else if (node.children !== undefined & node.children !== null & node.depth < this.depth) {
       node.children.forEach(this.traverseDepth);
     } else if (node._children !== undefined & node.depth >= this.depth) {
+      node._children.forEach(this.traverseDepth);
+      node.children = node._children;
+      node._children = null;
+    }else if(node._children !== undefined & node.depth < this.depth){
       node._children.forEach(this.traverseDepth);
       node.children = node._children;
       node._children = null;
@@ -132,7 +125,7 @@ export default class MindMap {
   }
   depthChange = (incr) => {
     var depth = Math.max(0, Math.min(this.depth + incr*2, this.maxDepth*2));
-    if (this.collapsed) { // this.depth !== depth & 
+    if (this.depth !== depth & this.collapsed) { // this.depth !== depth & 
       this.traverseDepth(this.state.root);
       this.collapsed = false;
     }
@@ -400,16 +393,25 @@ export default class MindMap {
       var svg = this.svg;
       var state = this.state;
       var color = this.colors[this.state.color]();
-      var maxDepth = Math.max.apply(Math, nodes.map(i => i.depth));
-      color = d3.scale.linear().domain([0, maxDepth])
-        .interpolate(d3.interpolateHcl)
-        .range([d3.rgb("#007AFF"), d3.rgb('#FFF500')])
+      var currentMaxDepth = Math.max.apply(Math, nodes.map(i => i.depth));
+      // console.log(currentMaxDepth, this.colorA, this.colorB);
+      this.depth = currentMaxDepth;
+      this.depthText.textContent = this.depth/2;
+
+      color = d3.scale.linear().domain([0, this.maxDepth])
+      .interpolate(d3.interpolateHcl)
+      .range([this.colorA, this.colorB])
       var linkShape = this.linkShapes[this.state.linkShape]();
 
-      if (!nodes[0].color) {
+      if (!nodes[0].color | this.newColors) {
         for (var i in nodes) {
           nodes[i].color = color(nodes[i].depth);
         }
+        for (var i in links) {
+          links[i].source.color = color(links[i].source.depth);
+          links[i].target.color = color(links[i].target.depth);
+        }
+        this.newColors = false;
       }
 
       function linkWidth(d) {
@@ -549,5 +551,38 @@ export default class MindMap {
       d._children = null;
     }
     this.update(d);
+  }
+}
+
+
+var traverseBranchId = (node, branch, state) => {
+  if (!("branch" in node)) {
+    node.branch = branch;
+  }
+  if (node.children) {
+    node.children.forEach(function (d) {
+      traverseBranchId(d, branch, state);
+    });
+  }
+}
+var traverseDummyNodes = (node) => {
+  if (node.children) {
+    node.children.forEach(traverseDummyNodes);
+
+    node.children = [{
+      name: '',
+      dummy: true,
+      children: node.children
+    }];
+  }
+}
+var traverseTruncateLabels = (node, length) => {
+  if (node.name.length > length) {
+    node.name = node.name.slice(0, length - 1) + '\u2026';
+  }
+  if (node.children) {
+    node.children.forEach(function (n) {
+      traverseTruncateLabels(n, length);
+    });
   }
 }
