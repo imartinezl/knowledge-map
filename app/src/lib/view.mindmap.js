@@ -2,8 +2,6 @@
 import * as d3 from 'd3';
 import d3_layout_flextree from './d3-flextree';
 // const flextree = require('d3-flextree').flextree;
-import '../style.css';
-
 
 var traverseBranchId = (node, branch, state) => {
   if (!("branch" in node)) {
@@ -55,7 +53,6 @@ export default class Markmap {
     this.font_family = 'Bebas Neue'
     this.font = this.font_size + ' ' + this.font_family
     this.svgElement = document.getElementById(svg.split('#')[1]);
-
     this.svgElement.style.fontFamily = this.font_family;
     this.svgElement.style.fontSize = this.font_size;
     
