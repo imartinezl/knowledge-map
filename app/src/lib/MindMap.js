@@ -1,6 +1,6 @@
 // import { flextree } from 'd3-flextree';
 import * as d3 from 'd3';
-import d3_layout_flextree from './d3-flextree';
+import d3_layout_flextree from './d3Flextree';
 // const flextree = require('d3-flextree').flextree;
 
 
@@ -36,12 +36,12 @@ var traverseTruncateLabels = (node, length) => {
   }
 }
 
-export default class Markmap {
+export default class MindMap {
 
   constructor(svg, data, options) {
     this.initConfig(svg, data, options);
     this.initCanvas();
-    this.initMarkmap(svg, data, options);
+    this.initMindMap(svg, data, options);
     this.initEvents();
     this.depthChange(0);  
   }
@@ -195,7 +195,7 @@ export default class Markmap {
     }
   }
 
-  initMarkmap = (svg, data, options) => {
+  initMindMap = (svg, data, options) => {
     options = options || {};
 
     svg = svg.datum ? svg : d3.select(svg);

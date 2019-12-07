@@ -1,19 +1,10 @@
 "use strict";
 
 import * as d3 from 'd3';
-// const flextree = require('d3-flextree').flextree;
-import Markmap from './lib/view.mindmap';
+import MindMap from './lib/MindMap';
 
-//require('markmap/lib/d3-flextree');
-// import './lib/d3-flextree.js';
-
-// const markmap = require('markmap/lib/view.mindmap');
-// import markmap from './lib/view.mindmap';
-
-import parse from './lib/parse.txtmap';
-import transform from './lib/transform.headings';
-
-import ColorPicker from './lib/ColorPicker';
+import parse from './lib/ParseTxt';
+import transform from './lib/TransformText';
 
 export default class AppController {
 
@@ -22,7 +13,6 @@ export default class AppController {
     }
 
     init() {
-        new ColorPicker();
         console.log("HEY");
         var font = '15pt Bebas Neue';
         document.fonts.load(font).then( () => {
@@ -30,8 +20,8 @@ export default class AppController {
             d3.text("./assets/map.txt", (error, text) => {
                 const data = transform(parse(text));
                 console.log(data);
-                console.log(Markmap);
-                new Markmap('svg#mindmap', data, {});        
+                console.log(MindMap);
+                new MindMap('svg#mindmap', data, {});        
             });
         });
 
