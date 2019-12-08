@@ -4,22 +4,22 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-    mode: 'development',
-    watch: true,
+    mode: 'production',
+    watch: false,
     watchOptions: {
         ignored: ['node_modules']
     },
     entry: './src/index.js',
     output: {
         filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve('../'), //path.resolve(__dirname, 'dist'),
     },
     devtool: "inline-source-map",
     devServer: {
-        contentBase: './dist',
+        contentBase: '../',
     },
     plugins: [
-        new CleanWebpackPlugin(),
+        // new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
             title: 'Output Management',
             template: './src/index.html'
