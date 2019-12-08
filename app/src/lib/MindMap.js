@@ -13,6 +13,8 @@ export default class MindMap {
     this.initCanvas();
     this.initMindMap(svg, data, options);
     this.initEvents();
+    
+    this.depth = 1;
     this.depthChange(0);
   }
   
@@ -144,11 +146,11 @@ export default class MindMap {
     }
   }
   depthChange = (incr) => {
-    var a = 1;
+    var k = 1;
     if(this.state.linkShape !== "bracket"){
-      a = 2;
+      k = 2;
     }
-    var depth = Math.max(0, Math.min(this.depth + incr*a, this.maxDepth*a));
+    var depth = Math.max(0, Math.min(this.depth + incr*k, this.maxDepth*k));
     if (this.depth !== depth & this.collapsed) { // this.depth !== depth & 
       this.traverseDepth(this.state.root);
       this.collapsed = false;
@@ -407,7 +409,7 @@ export default class MindMap {
       var svg = this.svg;
       var state = this.state;
       var currentMaxDepth = Math.max.apply(Math, nodes.map(i => i.depth));
-      console.log(currentMaxDepth) //, this.colorA, this.colorB);
+      // console.log(currentMaxDepth) //, this.colorA, this.colorB);
       this.depth = currentMaxDepth;
       if(state.linkShape == "bracket"){
         this.depthText.textContent = this.depth;
