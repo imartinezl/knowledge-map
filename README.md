@@ -1,5 +1,7 @@
 # knowledge-map
 
+<img src="screenshot.jpg"/>
+
 
 Mindmap of every concept, idea, technique, I had contact with, or interact in some way.
 This could represent the concepts I can talk about, with less or more detail and competence.
@@ -12,10 +14,21 @@ Cool options to have: interact with the mindmap on the web, and save different v
 
 Available tools for mindmap generation
 https://mermaid-js.github.io/mermaid/#/
+
 https://gojs.net/latest/index.html
+
 https://github.com/jdebarochez/d3-mindmap
+
 https://www.mindmeister.com/
+
 http://freemind.sourceforge.net/wiki/index.php/Main_Page
+
 https://www.mindjet.com/es/
+
 https://github.com/learn-anything/react-mindmap
+
 https://github.com/dundalek/markmap
+
+
+
+
