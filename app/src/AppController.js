@@ -1,10 +1,10 @@
 "use strict";
 
-import * as d3 from 'd3';
+// import * as d3 from 'd3';
 import MindMap from './lib/MindMap';
 import parse from './lib/ParseTxt';
 import transform from './lib/TransformText';
-import TextArea from './lib/TextArea';
+// import TextArea from './lib/TextArea';
 
 export default class AppController {
 
