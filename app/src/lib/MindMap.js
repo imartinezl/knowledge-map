@@ -17,10 +17,12 @@ export default class MindMap {
   }
   
   initConfig(svg, data, options){
+    
     this.font_size = '15pt'
     this.font_family = 'Bebas Neue'
     this.font = this.font_size + ' ' + this.font_family
     
+    this.svg = svg;
     this.svgElement = document.getElementById(svg.split('#')[1]);
     this.svgElement.style.fontFamily = this.font_family;
     this.svgElement.style.fontSize = this.font_size;
@@ -33,24 +35,26 @@ export default class MindMap {
     
     this.newColors = false;
     this.colorA = '#007AFF';
-    this.colorB = '#FFF500'
+    this.colorB = '#FFF500';
     this.colorPickerA = new ColorPicker('#color-picker-A', this.colorA);
     this.colorPickerB = new ColorPicker('#color-picker-B', this.colorB);
 
+    this.nodeSelect = document.getElementById('nodeSelect');
+    this.linkSelect = document.getElementById('linkSelect');
+
     this.config = {
       circleRadius: 5,
-      color: 'category10', // category20 | gray | category10 | category20b
       duration: 300,
       font: this.font,
       layout: 'tree',
-      linkShape: 'diagonal',
+      linkShape: this.linkSelect[this.linkSelect.selectedIndex].value, // diagonal or bracket
       nodeHeight: parseInt(this.font),
       nodePaddingHorizontal: 12,
       nodePaddingVertical: 12,
       nodeSeparation: 50,
-      renderer: 'boxed', // basic or boxed
+      renderer: this.nodeSelect[this.nodeSelect.selectedIndex].value, // basic or boxed
       spacingVertical: 12,
-      spacingHorizontal: 300,
+      spacingHorizontal: 20,
       truncateLabels: 0,
     };
 
@@ -70,6 +74,8 @@ export default class MindMap {
     document.getElementById("depthOut").addEventListener("click", this.depthChange.bind(this,-1));
     this.colorPickerA.pickr.on('change', this.colorChanged.bind(this));
     this.colorPickerB.pickr.on('change', this.colorChanged.bind(this));
+    this.nodeSelect.onchange = (event) => this.nodeStyleChanged(event);
+    this.linkSelect.onchange = (event) => this.linkStyleChanged(event);
   }
   zoomIn() {
     this.updateZoomCenter(this.state.zoomTranslate, this.state.zoomScale * 1.1);
@@ -94,6 +100,16 @@ export default class MindMap {
     this.colorB = this.colorPickerB.getHEXAColor();
     this.colorPickerB.pickr.setColor(this.colorB);
     this.update(this.state.root, false);
+  }
+  nodeStyleChanged(event){
+    this.state.renderer = event.target.value;
+    this.svg.selectAll("*").remove()
+    this.update(this.state.root, true);
+  }
+  linkStyleChanged(event){
+    this.state.linkShape = event.target.value;
+    this.svg.selectAll("*").remove()
+    this.update(this.state.root, true);
   }
   traverseDepth = (node) => {
     // console.log(node.name, node.children, node.depth)
@@ -139,8 +155,6 @@ export default class MindMap {
       zoomScale: 1,
       zoomTranslate: [0, 0],
       autoFit: false,
-      depthMaxSize: {},
-      yByDepth: {},
     };
   }
   getTextSize = (text, font) => {
@@ -178,13 +192,6 @@ export default class MindMap {
         return "M" + d.source.y + "," + d.source.x
           + "V" + d.target.x + "H" + d.target.y;
       };
-    }
-  }
-  colors = {
-    ...d3.scale, ...{
-      gray: function () {
-        return function () { return '#929292'; }
-      }
     }
   }
 
@@ -367,7 +374,6 @@ export default class MindMap {
     boxed: function (source, nodes, links) {
       var svg = this.svg;
       var state = this.state;
-      // var color = this.colors[this.state.color]();
       this.renderers.basic.call(this, source, nodes, links);
       var node = svg.selectAll("g.markmap-node");
 
@@ -392,13 +398,16 @@ export default class MindMap {
     basic: function (source, nodes, links) {
       var svg = this.svg;
       var state = this.state;
-      var color = this.colors[this.state.color]();
       var currentMaxDepth = Math.max.apply(Math, nodes.map(i => i.depth));
       // console.log(currentMaxDepth, this.colorA, this.colorB);
       this.depth = currentMaxDepth;
-      this.depthText.textContent = this.depth/2;
+      if(state.linkShape == "bracket"){
+        this.depthText.textContent = this.depth;
+      }else{
+        this.depthText.textContent = this.depth/2;
+      }
 
-      color = d3.scale.linear().domain([0, this.maxDepth])
+      var color = d3.scale.linear().domain([0, this.maxDepth])
       .interpolate(d3.interpolateHcl)
       .range([this.colorA, this.colorB])
       var linkShape = this.linkShapes[this.state.linkShape]();
