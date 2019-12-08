@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Knowledge Map</title>
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+</head>
+
+<body>
+    <div class="container is-fluid">
+        <section class="section">
+            <h1 class="title">Knowledge Map</h1>
+            <nav class="level">
+                <div class="level-left">
+                    <div class="level-item buttons has-addons">
+                        <button id="autofit" class="button is-small is-rounded" type="button">
+                            <span class="icon is-small">
+                                <i class="fas fa-expand"></i>
+                            </span>
+                            <!-- <span>Fit to Screen</span> -->
+                        </button>
+                        <button id="zoomIn" class="button is-small is-rounded" type="button">
+                            <span class="icon is-small">
+                                <i class="fas fa-search-plus"></i>
+                            </span>
+                            <!-- <span>Zoom In +</span> -->
+                        </button>
+                        <button id="zoomOut" class="button is-small is-rounded" type="button">
+                            <span class="icon is-small">
+                                <i class="fas fa-search-minus"></i>
+                            </span>
+                            <!-- <span>Zoom Out -</span> -->
+                        </button>
+                    </div>
+                </div>
+                <div class="level-right">
+                    <div class="level-item buttons has-addons">
+                        <button id="depthOut" class="button is-small is-rounded" type="button">
+                            <span class="icon is-small">
+                                <i class="fas fa-angle-double-left"></i>
+                            </span>
+                            <!-- <span>Collapse Level</span> -->
+                        </button>
+                        <button id="depthText" class="button is-small is-rounded is-static"></button>
+                        <button id="depthIn" class="button is-small is-rounded" type="button">
+                            <span class="icon is-small">
+                                <i class="fas fa-angle-double-right"></i>
+                            </span>
+                            <!-- <span>Expand Level</span> -->
+                        </button>
+                    </div>
+                </div>
+            </nav>
+            <svg id="mindmap"></svg>
+            <nav class="level">
+                <div class="level-left">
+                    <div id='color-picker-A'></div>
+                    <div id='color-picker-B'></div>
+                </div>
+                <div class="level-right">
+                    <div class="control has-icons-left">
+                        <div class="select is-small is-rounded">
+                            <select id="nodeSelect">
+                                <option value="boxed" selected>Boxed</option>
+                                <option value="basic">Basic</option>
+                            </select>
+                        </div>
+                        <div class="icon is-small is-left">
+                            <i class="fas fa-window-maximize"></i>
+                        </div>
+                    </div>
+                    <div class="control has-icons-left">
+                        <div class="select is-small is-rounded">
+                            <select id="linkSelect">
+                                <option value="diagonal" selected>Diagonal</option>
+                                <option value="bracket">Bracket</option>
+                            </select>
+                        </div>
+                        <div class="icon is-small is-left">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                    </div>
+
+                </div>
+            </nav>
+            <!-- <textarea id="textarea" class="textarea is-small"></textarea> -->
+        </section>
+
+    </div>
+
+<script type="text/javascript" src="bundle.js"></script></body>
+
+</html>
