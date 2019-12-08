@@ -13,11 +13,10 @@ export default class AppController {
     }
 
     init() {
-        // new TextArea();
         var font = '15pt Bebas Neue';
         document.fonts.load(font).then( () => {
             console.log('Font loaded');
-            d3.text("./assets/map.txt", (error, text) => {
+            d3.text("./assets/map1.txt", (error, text) => {
                 const data = transform(parse(text));
                 console.log(data);
                 new MindMap('svg#mindmap', data, {});        

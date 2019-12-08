@@ -27,21 +27,16 @@ export default class MindMap {
     this.svgElement.style.fontFamily = this.font_family;
     this.svgElement.style.fontSize = this.font_size;
     
-    this.collapsed = false;
-    this.traverseMaxDepth(data);
-    this.depth = 1; //this.maxDepth;
-    this.depthText = document.getElementById("depthText");
-    this.depthText.textContent = this.depth/2;
     
     this.newColors = false;
     this.colorA = '#007AFF';
     this.colorB = '#FFF500';
     this.colorPickerA = new ColorPicker('#color-picker-A', this.colorA);
     this.colorPickerB = new ColorPicker('#color-picker-B', this.colorB);
-
+    
     this.nodeSelect = document.getElementById('nodeSelect');
     this.linkSelect = document.getElementById('linkSelect');
-
+    
     this.config = {
       circleRadius: 5,
       duration: 300,
@@ -57,7 +52,16 @@ export default class MindMap {
       spacingHorizontal: 20,
       truncateLabels: 0,
     };
-
+    
+    this.collapsed = false;
+    this.traverseMaxDepth(data);
+    this.depth = 1; //this.maxDepth;
+    this.depthText = document.getElementById("depthText");
+    if(this.config.linkShape == "bracket"){
+      this.depthText.textContent = this.depth;
+    }else{
+      this.depthText.textContent = this.depth/2;
+    }
   }
   initCanvas() {
     this.canvas = document.createElement("canvas");
@@ -140,7 +144,11 @@ export default class MindMap {
     }
   }
   depthChange = (incr) => {
-    var depth = Math.max(0, Math.min(this.depth + incr*2, this.maxDepth*2));
+    var a = 1;
+    if(this.state.linkShape !== "bracket"){
+      a = 2;
+    }
+    var depth = Math.max(0, Math.min(this.depth + incr*a, this.maxDepth*a));
     if (this.depth !== depth & this.collapsed) { // this.depth !== depth & 
       this.traverseDepth(this.state.root);
       this.collapsed = false;
@@ -399,7 +407,7 @@ export default class MindMap {
       var svg = this.svg;
       var state = this.state;
       var currentMaxDepth = Math.max.apply(Math, nodes.map(i => i.depth));
-      // console.log(currentMaxDepth, this.colorA, this.colorB);
+      console.log(currentMaxDepth) //, this.colorA, this.colorB);
       this.depth = currentMaxDepth;
       if(state.linkShape == "bracket"){
         this.depthText.textContent = this.depth;
