@@ -16,11 +16,16 @@ export default class AppController {
         var font = '15pt Bebas Neue';
         document.fonts.load(font).then( () => {
             console.log('Font loaded');
-            d3.text("./assets/map1.txt", (error, text) => {
+            var txt = 'https://raw.githubusercontent.com/imartinezl/knowledge-map/master/app/src/assets/map1.txt?token=AE4QZJXCK222DBQFZMMOZYC56Y2TU';
+            fetch(txt).then((response) => response.text().then((text) => {
                 const data = transform(parse(text));
-                console.log(data);
-                new MindMap('svg#mindmap', data, {});        
-            });
+                new MindMap('svg#mindmap', data, {});
+            }))
+            // d3.text(txt, (error, text) => {
+            //     const data = transform(parse(text));
+            //     console.log(data);
+            //     new MindMap('svg#mindmap', data, {});        
+            // });
         });
 
 
