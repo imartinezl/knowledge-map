@@ -14,18 +14,18 @@ export default class AppController {
 
     init() {
         var font = '15pt Bebas Neue';
-        document.fonts.load(font).then( () => {
+        document.fonts.load(font).then(() => {
             console.log('Font loaded');
-            var txt = 'https://raw.githubusercontent.com/imartinezl/knowledge-map/master/app/src/assets/map1.txt?token=AE4QZJXCK222DBQFZMMOZYC56Y2TU';
+            var txt = 'https://raw.githubusercontent.com/imartinezl/knowledge-map/master/app/src/assets/map1.txt?token=AE4QZJWSMNK4TXXXCUIKQOC6E5XBW';
             fetch(txt).then((response) => response.text().then((text) => {
-                const data = transform(parse(text));
-                new MindMap('svg#mindmap', data, {});
-            }))
-            // d3.text(txt, (error, text) => {
-            //     const data = transform(parse(text));
-            //     console.log(data);
-            //     new MindMap('svg#mindmap', data, {});        
-            // });
+                    const data = transform(parse(text));
+                    new MindMap('svg#mindmap', data, {});
+                }))
+                // d3.text(txt, (error, text) => {
+                //     const data = transform(parse(text));
+                //     console.log(data);
+                //     new MindMap('svg#mindmap', data, {});        
+                // });
         });
 
 
