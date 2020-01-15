@@ -31,4 +31,12 @@ https://github.com/dundalek/markmap
 
 
 
+## data-science-ontology
+
+https://www.datascienceontology.org/
+https://www.researchgate.net/publication/324957763_Big_Data_analytics_ontology
+https://github.com/IBM/datascienceontology
+https://github.com/epatters/semanticflowgraph
+
+
 
