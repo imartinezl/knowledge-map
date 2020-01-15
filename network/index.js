@@ -37,9 +37,9 @@
          multiselect: false,
          dragView: true,
          dragNodes: true,
-         hideNodesOnDrag: true,
+         hideNodesOnDrag: false,
          hideEdgesOnDrag: false,
-         hideEdgesOnZoom: true,
+         hideEdgesOnZoom: false,
          navigationButtons: true
      },
      physics: {
@@ -59,6 +59,9 @@
          shapeProperties: {
              borderRadius: 10,
          }
+     },
+     manipulation: {
+         enabled: true
      }
 
  };
@@ -67,15 +70,29 @@
  var network = new vis.Network(container, data, options);
 
 
- network.on('click', function(properties) {
-     var ids = properties.nodes;
-     var clickedNodes = nodes.get(ids);
-     console.log('clicked nodes:', ids);
-     let id = ids[0];
-     console.log(nodes)
-     if (id !== undefined) {
-         nodes.update({ id: 6, label: "Node 6" });
-         edges.update({ from: ids[0], to: 6 });
-         edges.update({ from: 2, to: 5, hidden: false })
-     }
- });
+//  network.on('click', function(properties) {
+//      var ids = properties.nodes;
+//      var clickedNodes = nodes.get(ids);
+//      console.log('clicked nodes:', ids);
+//      let id = ids[0];
+//      console.log(nodes)
+//      if (id !== undefined) {
+//          nodes.update({ id: 6, label: "Node 6" });
+//          edges.update({ from: ids[0], to: 6 });
+//          edges.update({ from: 2, to: 5, hidden: false })
+//      }
+//  });
+
+//  network.on('selectNode', properties => {
+//      console.log('hey')
+//  });
+
+//  network.on('doubleClick', params => {
+//     var updatedIds = nodes.add([{
+//         label:'new',
+//         x:params.pointer.canvas.x,
+//         y:params.pointer.canvas.y
+//     }]);
+//     network.selectNodes([updatedIds[0]]);
+//     network.editNode();
+//  });
