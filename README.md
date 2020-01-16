@@ -37,6 +37,7 @@ https://www.datascienceontology.org/
 https://www.researchgate.net/publication/324957763_Big_Data_analytics_ontology
 https://link.springer.com/chapter/10.1007/978-3-030-14401-2_16
 https://projects.tib.eu/orkg/
+https://kgtutorial.github.io/
 https://github.com/IBM/datascienceontology
 https://github.com/epatters/semanticflowgraph
 https://medium.com/predict/where-ontologies-end-and-knowledge-graphs-begin-6fe0cdede1ed
