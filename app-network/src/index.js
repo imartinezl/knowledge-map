@@ -1,5 +1,7 @@
 import './styles/index.scss'
-import vis from 'vis-network'
+// import vis from 'vis-network'
+// var vis = require('vis-network');
+
 
 // create an array with nodes
 var nodes = new vis.DataSet([
@@ -57,7 +59,7 @@ function draw() {
         clickToUse: false,
         layout: {
             randomSeed: 1,
-            clusterThreshold: 50
+            clusterThreshold: 150
         },
         interaction: {
             keyboard: false,
@@ -170,7 +172,7 @@ function draw() {
                 clusters.push({ id: 'cluster:' + clusterIndex, scale: scale });
                 return clusterOptions;
             },
-            clusterNodeProperties: { borderWidth: 3, shape: 'database', font: { size: 30 } }
+            clusterNodeProperties: { borderWidth: 3, shape: 'circle', font: { size: 30 } }
         }
         network.clusterOutliers(clusterOptionsByData);
         if (document.getElementById('stabilizeCheckbox').checked === true) {

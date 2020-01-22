@@ -46,6 +46,7 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
+    "bulma": "^0.8.0",
     "vis-network": "^7.2.0"
   }
 }
