@@ -10,17 +10,12 @@ html {
     font-size: $root-font-size;
     font-family: $font-family;
     max-width: $page-width;
-    margin: 0 auto;
-    text-align: center;
+    // margin: 0 auto;
+    // text-align: center;
 }
 
 p {
     font-size: $paragraph-font-size;
-}
-
-body,
-select {
-    font: 10pt Roboto;
 }
 
 #mynetwork {
