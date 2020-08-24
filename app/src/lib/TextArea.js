@@ -30,7 +30,7 @@ export default class TextArea {
         this.init();
         // this.initEvents();
     }
-    
+
     init() {
         this.textarea = document.getElementById('textarea');
         enableTab('textarea');

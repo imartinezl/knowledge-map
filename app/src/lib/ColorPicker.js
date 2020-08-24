@@ -1,4 +1,4 @@
-import '@simonwep/pickr/dist/themes/nano.min.css';   // 'classic' theme
+import '@simonwep/pickr/dist/themes/nano.min.css'; // 'classic' theme
 import Pickr from '@simonwep/pickr';
 
 
@@ -8,7 +8,7 @@ export default class ColorPicker {
         this.init(el, defColor);
         this.initEvents();
     }
-    
+
     init(el, defColor) {
         this.pickr = Pickr.create({
             el: el,
@@ -54,13 +54,13 @@ export default class ColorPicker {
         this.pickr.setColor(defColor);
     }
 
-    initEvents(){
+    initEvents() {
         // this.pickr.on('change', (color, instance) => {
         //     console.log('change', color, instance);
         // })
     }
 
-    getHEXAColor(){
+    getHEXAColor() {
         return this.pickr.getColor().toHEXA().toString();
     }
 }

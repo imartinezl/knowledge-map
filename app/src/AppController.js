@@ -14,13 +14,15 @@ export default class AppController {
 
     init() {
         var font = '15pt Bebas Neue';
-        document.fonts.load(font).then( () => {
+        document.fonts.load(font).then(() => {
             console.log('Font loaded');
-            d3.text("./assets/map1.txt", (error, text) => {
-                const data = transform(parse(text));
-                console.log(data);
-                new MindMap('svg#mindmap', data, {});        
-            });
+            let txt = 'https://raw.githubusercontent.com/imartinezl/knowledge-map/master/app/src/assets/map1.txt'
+            fetch(txt)
+                .then((response) => response.text())
+                .then((text) => {
+                    const data = transform(parse(text));
+                    new MindMap('svg#mindmap', data, {});
+                })
         });
 
 
