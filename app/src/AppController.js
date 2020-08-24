@@ -16,7 +16,7 @@ export default class AppController {
         var font = '15pt Bebas Neue';
         document.fonts.load(font).then(() => {
             console.log('Font loaded');
-            var txt = 'https://raw.githubusercontent.com/imartinezl/knowledge-map/master/app/src/assets/map1.txt?token=AE4QZJWSMNK4TXXXCUIKQOC6E5XBW';
+            var txt = 'https://raw.githubusercontent.com/imartinezl/knowledge-map/master/app/src/assets/map1.txt';
             fetch(txt).then((response) => response.text().then((text) => {
                     const data = transform(parse(text));
                     new MindMap('svg#mindmap', data, {});
